@@ -514,8 +514,34 @@ Used with the slave setting to specify the master instance from which
 this slave instance will replicate. Default: <>
 *Note*: deprecated – use replica sets
 
+##### `tls`
+Set to true to enable tls. Default: <>
+*Important*: If using MongoDB *lower* than 4.2 please use the ssl-settings instead
+*Important*: You need to have tls_key set as well, and the file needs to
+pre-exist on node. If you wish to use certificate validation, tls_ca must also
+be set.
+
+##### `tls_key`
+Default: <>
+
+##### `tls_ca`
+Default: <>
+
+##### `tls_weak_cert`
+Set to true to disable mandatory SSL/TLS client authentication
+Default: False
+
+##### `tls_invalid_hostnames`
+Set to true to disable fqdn SSL/TLS cert check
+Default: False
+
+##### `tls_mode`
+Ssl authorization mode. Valid options are: requireTLS, preferTLS, allowTLS.
+Default: requireTLS
+
 ##### `ssl`
 Set to true to enable ssl. Default: <>
+*Deprecated*: If using MongoDB 4.2 or later please use the tls-settings instead
 *Important*: You need to have ssl_key set as well, and the file needs to
 pre-exist on node. If you wish to use certificate validation, ssl_ca must also
 be set.
@@ -527,11 +553,11 @@ Default: <>
 Default: <>
 
 ##### `ssl_weak_cert`
-Set to true to disable mandatory SSL client authentication
+Set to true to disable mandatory SSL/TLS client authentication
 Default: False
 
 ##### `ssl_invalid_hostnames`
-Set to true to disable fqdn SSL cert check
+Set to true to disable fqdn SSL/TLS cert check
 Default: False
 
 ##### `ssl_mode`

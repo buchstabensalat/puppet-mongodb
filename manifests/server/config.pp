@@ -66,6 +66,12 @@ class mongodb::server::config {
   $ssl_weak_cert    = $mongodb::server::ssl_weak_cert
   $ssl_invalid_hostnames = $mongodb::server::ssl_invalid_hostnames
   $ssl_mode         = $mongodb::server::ssl_mode
+  $tls              = $mongodb::server::tls
+  $tls_key          = $mongodb::server::tls_key
+  $tls_ca           = $mongodb::server::tls_ca
+  $tls_weak_cert    = $mongodb::server::tls_weak_cert
+  $tls_invalid_hostnames = $mongodb::server::tls_invalid_hostnames
+  $tls_mode         = $mongodb::server::tls_mode
   $storage_engine   = $mongodb::server::storage_engine
 
   File {

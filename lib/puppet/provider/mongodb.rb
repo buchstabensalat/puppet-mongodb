@@ -31,10 +31,14 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       'bindip' => config['net.bindIp'],
       'port' => config['net.port'],
       'ipv6' => config['net.ipv6'],
-      'allowInvalidHostnames' => config['net.ssl.allowInvalidHostnames'],
+      'sslAllowInvalidHostnames' => config['net.ssl.allowInvalidHostnames'],
       'ssl' => config['net.ssl.mode'],
       'sslcert' => config['net.ssl.PEMKeyFile'],
       'sslca' => config['net.ssl.CAFile'],
+      'tlsAllowInvalidHostnames' => config['net.tls.allowInvalidHostnames'],
+      'tls' => config['net.tls.mode'],
+      'tlscert' => config['net.tls.certificateKeyFile'],
+      'tlsca' => config['net.tls.CAFile'],
       'auth' => config['security.authorization'],
       'shardsvr' => config['sharding.clusterRole'],
       'confsvr' => config['sharding.clusterRole']
@@ -52,9 +56,20 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     !ssl_mode.nil? && ssl_mode != 'disabled'
   end
 
+  def self.tls_is_enabled(config = nil)
+    config ||= mongo_conf
+    tls_mode = config.fetch('tls')
+    !tls_mode.nil? && tls_mode != 'disabled'
+  end
+
   def self.ssl_invalid_hostnames(config = nil)
     config ||= mongo_conf
-    config['allowInvalidHostnames']
+    config['sslAllowInvalidHostnames']
+  end
+
+  def self.tls_invalid_hostnames(config = nil)
+    config ||= mongo_conf
+    config['tlsAllowInvalidHostnames']
   end
 
   def self.mongo_cmd(db, host, cmd)
@@ -63,6 +78,7 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     args = [db, '--quiet', '--host', host]
     args.push('--ipv6') if ipv6_is_enabled(config)
     args.push('--sslAllowInvalidHostnames') if ssl_invalid_hostnames(config)
+    args.push('--tlsAllowInvalidHostnames') if tls_invalid_hostnames(config)
 
     if ssl_is_enabled(config)
       args.push('--ssl')
@@ -70,6 +86,14 @@ class Puppet::Provider::Mongodb < Puppet::Provider
 
       ssl_ca = config['sslca']
       args += ['--sslCAFile', ssl_ca] unless ssl_ca.nil?
+    end
+
+    if tls_is_enabled(config)
+      args.push('--tls')
+      args += ['--tlsCertificateKeyFile', config['tlscert']]
+
+      tls_ca = config['tlsca']
+      args += ['--tlsCAFile', tls_ca] unless tls_ca.nil?
     end
 
     args += ['--eval', cmd]
